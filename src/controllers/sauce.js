@@ -64,11 +64,11 @@ exports.getAllSauces = (req, res, next) => {
 
 // Afficher + comptage des like/dislike
 exports.likeSauce = (req, res, next) => {
-  const userId = req.body.userId;
-  const like = req.body.like;
-  const sauceId = req.params.id;
+  const userId = req.body.userId; // va trouver le User ID
+  const like = req.body.like; // va trouver le like
+  const sauceId = req.params.id; // va trouver le ID dans la requete 
   Sauce.findOne({ _id: sauceId })
-      .then(sauce => {
+      .then(sauce => { 
           // cas ou les valeurs sont à 0 
           const newValues = {
               usersLiked: sauce.usersLiked,
@@ -77,7 +77,7 @@ exports.likeSauce = (req, res, next) => {
               dislikes: 0
           }
           // Différentes possibilités 
-          switch (like) {
+          switch (like) { // fonction switch qui permet l'evaluation de l'expression et en fonction du cas effectue les instructions par cas 
               case 1:  // cas ou la sauce à été likée 
                   newValues.usersLiked.push(userId);
                   break;
@@ -101,7 +101,7 @@ exports.likeSauce = (req, res, next) => {
           newValues.dislikes = newValues.usersDisliked.length;
           // Mise à jour de la sauce avec les nouvelles valeurs
           Sauce.updateOne({ _id: sauceId }, newValues )
-              .then(() => res.status(200).json({ message: 'Sauce notée !' }))
+              .then(() => res.status(200).json({ message: 'Sauce mise à jour !' }))
               .catch(error => res.status(400).json({ error }))  
       })
       .catch(error => res.status(500).json({ error }));

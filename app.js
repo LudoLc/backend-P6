@@ -4,8 +4,10 @@ const userRoutes = require('./src/routes/user'); // chemin user
 const sauceRoute = require('./src/routes/sauces'); // chemin pour les sauces 
 const path = require('path');
 const bodyParser = require('body-parser');
+const {xss} = require('express-xss-sanitizer'); // empêche les injections xss (un code injecté pourra être lu mais pas interpreté par le code)
 require('dotenv').config();
 const app = express();
+
 
 
 
@@ -25,7 +27,7 @@ mongoose.connect(`${process.env.DB_LOGIN_ACCOUNT}`,
 
 app.use(bodyParser.json()); // pour rendre cela exploitable 
 app.use(express.json());
-
+app.use(xss());
 
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoute);

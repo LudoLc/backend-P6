@@ -1,9 +1,15 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const validator = require('validator');
 const User = require('../models/User');
 
 exports.signup = (req, res , next) => {
+  if(!validator.isEmail(req.body.email)) {
+    return res.status(400).json ({ message: "Votre email n'est pas valide!"})
+  } 
+  if(!validator.isStrongPassword(req.body.password)) {
+    return res.status(400).json ({ message: "Votre mot de passe n'est pas assez fort! Veuillez en choisir un autre! Comprenant au moins 1 majuscule, 1 minuscule, 1 chiffre et un symbole tel que : @&_-,!"})
+  }
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         const user = new User({
@@ -33,7 +39,7 @@ exports.login = (req, res, next) => {
                 token: jwt.sign(
                     { userId: user._id},
                     'RANDOM_TOKEN_SECRET',
-                    { expiresIn: '24h' }
+                    { expiresIn: '12h' }
                 )
             });
         })
