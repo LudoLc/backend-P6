@@ -7,9 +7,8 @@ exports.createSauce = (req, res, next) => { //function de callback
   //Le corps de la requête contient une chaîne donc on doit le parse
   const sauceObject = JSON.parse(req.body.sauce);//extraire l'objet json (l'objet sauce de la requête)
   //body correspond au model de l'objet que l'on envoi (on eleve id l'objet sauce de la requête)
-  delete sauceObject._id;// enlever le champ id (envoyé par le front-end) du corp de la requete (methode delete) car mongoos le genere automatiquement
-  
-  if((sauceObject.name) || 0 > sauceObject.name || sauceObject.name > 150){
+  delete sauceObject._id;// enlever le champ id (envoyé par le front-end) du corp de la requete (methode delete) car mongoose le genere automatiquement
+  if(sauceObject.name == '' || sauceObject.name.length >= 150){
     return res.status(400).json({ message: 'Ce nom est trop long / ou trop ne peut être vide' })
   }
   if(sauceObject.manufacturer.length > 150){
@@ -27,7 +26,14 @@ exports.createSauce = (req, res, next) => { //function de callback
   if(!regex.test(sauceObject.userId)){
     return res.status(400).json({ message: 'Cet id ne peut être utilisé!' })
   }
-  //console.log('test');
+  if (req.file) {
+    console.log("infos-->", req.file);
+    if (sauceObject.imageUrl != '') {
+      console.log(sauceObject);
+      const filename = sauceObject.imageUrl.split('/images/')[1];
+      fs.unlink(`images/${filename}`, () => {})
+    };
+  }
   const sauce = new Sauce({/* creation d'une nouvelle instance  de mon objet sauce (class) de le req*/  
   ...sauceObject,// operateur spread (...) vas copier les champ de l'objet , dans le corp de la request 
   //http ou https puis le host de notre server (localhost:3000), la racine du serveur
