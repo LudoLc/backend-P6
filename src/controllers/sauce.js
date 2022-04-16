@@ -33,6 +33,7 @@ exports.createSauce = (req, res, next) => { //function de callback
       const filename = sauceObject.imageUrl.split('/images/')[1];
       fs.unlink(`images/${filename}`, () => {})
     };
+    //ftyffthyfyfyfyfy
   }
   const sauce = new Sauce({/* creation d'une nouvelle instance  de mon objet sauce (class) de le req*/  
   ...sauceObject,// operateur spread (...) vas copier les champ de l'objet , dans le corp de la request 
