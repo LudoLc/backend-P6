@@ -48,7 +48,7 @@ exports.createSauce = (req, res, next) => {
   }
   const sauce = new Sauce({
     /* creation d'une nouvelle instance  de mon objet sauce (class) de le req*/
-    ...sauceObject, // operateur spread (...) vas copier les champ de l'objet , dans le corp de la request
+    ...sauceObject, // operateur spread (...) vas copier les champ de l'objet , dans le corps de la request
     //http ou https puis le host de notre server (localhost:3000), la racine du serveur
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
@@ -106,7 +106,7 @@ exports.getOneSauce = (req, res, next) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// Récuperer toutes les sauces!
+// Récuperer toutes les sauces!//
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
@@ -132,12 +132,23 @@ exports.likeSauce = (req, res, next) => {
         like // fonction switch qui permet l'evaluation de l'expression et en fonction du cas effectue les instructions par cas
       ) {
         case 1: // cas ou la sauce à été likée
+        if(newValues.usersLiked.includes(userId)) {
+          return res.status(403).json ({ message : "Vous avez deja liké la sauce!"})
+        } else {
           newValues.usersLiked.push(userId);
-          break;
+        }
+        break;
         case -1: // cas ou la sauce à été dislike
+        if(newValues.usersDisliked.includes(userId)) {
+          return res.status(403).json ({ message : "Vous avez deja disliké la sauce!"})
+        } else {
           newValues.usersDisliked.push(userId);
-          break;
+        }
+        break;
         case 0: // cas ou l'utilisateur supprime son like / dislike
+        if(!newValues.usersDisliked.includes(userId) && !newValues.usersLiked.includes(userId)){
+          return res.status(403).json ({ message : "Requête non parvenue "})
+        } 
           if (newValues.usersLiked.includes(userId)) {
             // cas ou annule le like
             const index = newValues.usersLiked.indexOf(userId);
@@ -159,3 +170,5 @@ exports.likeSauce = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
+
+
